@@ -9,6 +9,7 @@
 #include "PowerShare.h"
 #include <hidl/HidlTransportSupport.h>
 #include <fstream>
+#include <iostream>
 
 namespace vendor {
 namespace lineage {
@@ -16,7 +17,10 @@ namespace powershare {
 namespace V1_0 {
 namespace implementation {
 
-static const char *wireless_tx_enable_path = "/proc/wireless/enable_tx";
+static const char *wireless_tx_enable_path[] = {
+    "/proc/wireless/enable_tx",
+    NULL,
+};
 
 /*
  * Write value to path and close file.
@@ -28,12 +32,16 @@ static void set(const std::string& path, const T& value) {
 }
 
 template <typename T>
-static T get(const std::string& path, const T& def) {
-    std::ifstream file(path);
+static T get(const std::string& path) {
+    std::ifstream file;
     T result;
-
+    for (const char **path_iter = wireless_tx_enable_path; *path_iter != NULL; ++path_iter) {
+        file.open(*path_iter);
+        if (file.is_open())
+            break;
+    }
     file >> result;
-    return file.fail() ? def : result;
+    return file.fail() ? T() : result;
 }
 
 Return<bool> PowerShare::isEnabled() {
