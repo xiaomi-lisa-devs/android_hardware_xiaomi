@@ -16,7 +16,7 @@ namespace powershare {
 namespace V1_0 {
 namespace implementation {
 
-#define WIRELESS_TX_ENABLE_PATH "/proc/wireless/enable_tx"
+static const char *wireless_tx_enable_path = "/proc/wireless/enable_tx";
 
 /*
  * Write value to path and close file.
@@ -37,12 +37,12 @@ static T get(const std::string& path, const T& def) {
 }
 
 Return<bool> PowerShare::isEnabled() {
-    const auto value = get<std::string>(WIRELESS_TX_ENABLE_PATH, "0");
+    const auto value = get<std::string>(wireless_tx_enable_path, "0");
     return !(value == "disable" || value == "0");
 }
 
 Return<bool> PowerShare::setEnabled(bool enable) {
-    set(WIRELESS_TX_ENABLE_PATH, enable ? 1 : 0);
+    set(wireless_tx_enable_path, enable ? 1 : 0);
 
     return isEnabled();
 }
