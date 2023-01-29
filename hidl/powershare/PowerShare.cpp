@@ -19,6 +19,7 @@ namespace implementation {
 
 static const char *wireless_tx_enable_path[] = {
     "/proc/wireless/enable_tx",
+    "/sys/class/qcom-battery/reverse_chg_mode",
     NULL,
 };
 
